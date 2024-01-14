@@ -1,13 +1,26 @@
 #ifndef HELPERS_RESPONSE_H
 #define HELPERS_RESPONSE_H
 
+#include <cstdint>
 
-enum class RequestType {
-    SAVE_FILE = 100,
-    RETRIEVE_FILE = 200,
-    DELETE_FILE = 201,
-    DIR = 202
+enum class ResponseType :uint16_t {
+    // File succefully backed
+    S_BACKUP = 210,
+    // DIR operation success
+    S_DIR = 211,
+    // Transer or Delete operation success
+    S_DELETE_OR_TRANSFER = 212,
+    // File does not exist
+    F_DIR = 1001,
+    // Client has no files
+    F_NO_FILES = 1002,
+    // General error
+    F_ERROR = 1003
 };
 
+// Byte size for header fields, -1 mean byte size varies
 
-#endif HELPERS_RESPONSE_H
+const int8_t SERVER_VERSION = 1;
+const int8_t RESPONSE_STATUS = 2;
+
+#endif //HELPERS_RESPONSE_H

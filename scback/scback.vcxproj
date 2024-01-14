@@ -131,10 +131,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="SERVER_CPP\client.cpp" />
     <ClCompile Include="SERVER_CPP\request_handler.cpp" />
     <ClCompile Include="SERVER_CPP\server.cpp" />
-    <ClCompile Include="SERVER_CPP\server_tmp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SERVER_CPP\helpers_request.h" />

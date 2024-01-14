@@ -1,8 +1,12 @@
 #include "request_handler.h"
-#include "helpers_request.h"  
+#include "helpers_request.h" 
+#include "helpers_response.h" 
 #include <string>
 #include <iostream>
 #include <stdexcept>
+#include <vector>
+#include <cstdint>
+
 
 void RequestHandler::save_and_backup(RequestType opcode, uint16_t name_len, std::string file_name, uint32_t size, std::string Payload) {
     std::cout << "USE FUNCTION";
@@ -53,48 +57,44 @@ void RequestHandler::create_request(RequestType opcode) {
     }
 }
 
-uint8_t RequestHandler::validate_request_header(size_t length, uint8_t (&data)[MESSAGE_MAX_LENGTH]) {
-    
-    std::cout << length;
-    if (length < MIN_REQUEST_SIZE) {
+int8_t RequestHandler::validate_request_header(tcp::socket sock) {
         
-        throw std::runtime_error("A runtime error occurred");
-    }
-    uint32_t user_id;
-    uint8_t client_version, opcode;
+        int8_t ret_code = -1;
+        uint32_t user_id;
+        uint8_t c_version, opcode;
 
-    std::memcpy(&user_id, data, sizeof(uint32_t));
-    std::memcpy(&client_version, data + sizeof(uint32_t), sizeof(uint8_t));
-    std::memcpy(&opcode, data + sizeof(uint32_t) + sizeof(uint8_t), sizeof(uint8_t));
+        uint8_t data[MESSAGE_MAX_LENGTH];
+        boost::system::error_code ec;
 
-    // Print the interpreted values
-    std::cout << "user_id: " << user_id << std::endl;
-    std::cout << "client_version: " << static_cast<int>(client_version) << std::endl;
-    std::cout << "opcode: " << static_cast<int>(opcode) << std::endl;
+        boost::asio::read(sock, boost::asio::buffer(data, MIN_REQUEST_SIZE), ec);
 
-    return opcode;
+        if (!ec) {
+            std::memcpy(&user_id, data, sizeof(uint32_t));
+            std::memcpy(&c_version, data + sizeof(uint32_t), sizeof(uint8_t));
+            std::memcpy(&opcode, data + sizeof(uint32_t) + sizeof(uint8_t), sizeof(uint8_t));
+
+            std::cout << "Recivied Request: (user_id:" << user_id << ", client_version:"
+                << static_cast<int>(c_version) << ",opcode: " << static_cast<int>(opcode) <<
+                ")" << std::endl;
+        }
+
+        else { 
+            std::cerr << "Bad Request " << ec.what() << "\nResponding error " << 
+                static_cast<int>(ResponseType::F_ERROR) << "..";
+            
+            std::vector<uint8_t> message;
+            message.push_back(SERVER_VERSION);
+            uint16_t value = static_cast<int>(ResponseType::F_ERROR);
+            value = htons(value);
+
+            message.insert(message.end(), reinterpret_cast<uint8_t*>(&value),
+                reinterpret_cast<uint8_t*>(&value) + sizeof(uint16_t));
+
+            // Send the message using boost::asio::write
+            boost::asio::write(sock, boost::asio::buffer(message));
+        
+        
+        }
+
+    return ret_code;
 }
-
-/*
-int main() {
-        RequestHandler rh;
-
-        uint8_t opcode = static_cast<uint8_t>(RequestType::SAVE_FILE);
-        RequestType tmp = static_cast<RequestType>(8);
-
-        rh.create_request(static_cast<RequestType>(opcode));
-        opcode = static_cast<uint8_t>(RequestType::RETRIEVE_FILE);
-        rh.create_request(static_cast<RequestType>(opcode));
-        opcode = static_cast<uint8_t>(RequestType::DELETE_FILE);
-        rh.create_request(static_cast<RequestType>(opcode));
-        opcode = static_cast<uint8_t>(RequestType::DIR);
-        rh.create_request(static_cast<RequestType>(opcode));
-        try{
-            rh.create_request(static_cast<RequestType>(tmp));
-        }
-        catch (const std::exception& e) {
-            std::cerr << "Exception caught: " << e.what() << std::endl;
-        }
-
-        return 0;
-}*/

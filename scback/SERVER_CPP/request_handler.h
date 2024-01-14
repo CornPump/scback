@@ -1,8 +1,11 @@
 #ifndef REQUEST_HANDLER_H
 #define REQUEST_HANDLER_H
 
+#include <boost/asio.hpp>
 #include "helpers_request.h"  
 #include <string>
+
+using boost::asio::ip::tcp;
 
 class RequestHandler {
 
@@ -15,8 +18,8 @@ public:
     // Function to create and handle requests
     void create_request(RequestType opcode);
     bool validate_request_number(RequestType opcode);
-    uint8_t validate_request_header(size_t length, uint8_t(&data)[MESSAGE_MAX_LENGTH]);
+    int8_t validate_request_header(tcp::socket sock);
 
 };
 
-#endif REQUEST_HANDLER_H
+#endif //REQUEST_HANDLER_H
