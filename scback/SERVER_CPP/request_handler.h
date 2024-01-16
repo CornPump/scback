@@ -15,8 +15,9 @@ class RequestHandler {
     RequestType opcode;
     uint16_t name_len = 0;
     std::string file_name;
+    uint32_t size = 0;
 
-    void save_and_backup(RequestType opcode, uint16_t name_len, std::string file_name, uint32_t size, std::string Payload);
+    void save_and_backup(RequestType opcode, uint16_t name_len, std::string file_name, uint32_t size);
     void retrieve_file(RequestType opcode, uint16_t name_len, std::string file_name);
     void delete_file(RequestType opcode, uint16_t name_len, std::string file_name);
     void list_files(RequestType opcode);

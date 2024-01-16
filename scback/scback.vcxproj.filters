@@ -38,5 +38,8 @@
     <ClInclude Include="response_handler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SERVER_CPP\operation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

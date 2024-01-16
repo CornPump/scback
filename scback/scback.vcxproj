@@ -139,6 +139,7 @@
     <ClInclude Include="response_handler.h" />
     <ClInclude Include="SERVER_CPP\helpers_request.h" />
     <ClInclude Include="SERVER_CPP\helpers_response.h" />
+    <ClInclude Include="SERVER_CPP\operation.h" />
     <ClInclude Include="SERVER_CPP\request_handler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

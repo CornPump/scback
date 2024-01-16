@@ -21,7 +21,7 @@ const int8_t PAY_LOAD = -1;
 
 
 const size_t MIN_REQUEST_SIZE = 6;
-const int MAX_FILE_NAME = pow(NAME_LEN, sizeof(int8_t)) * 2;
+const int MAX_FILE_NAME = static_cast<int>(pow(NAME_LEN, sizeof(int8_t)) * 2);
 const int MESSAGE_MAX_LENGTH = 1024;
 #endif //HELPERS_REQUEST_H
 

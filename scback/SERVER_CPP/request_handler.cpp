@@ -15,14 +15,15 @@ void RequestHandler::clear(uint8_t message[], int length) {
 
 void RequestHandler::print() const{
 
-    std::cout << "user_id:" << this->user_id << "\n";
-    std::cout << "c_version:" << static_cast<int>(this->c_version) << "\n";
-    std::cout << "opcode:" << static_cast<int>(this->opcode) << "\n";
-    std::cout << "name_len:" << this->name_len << "\n";
-    std::cout << "file_name:" << this->file_name << "\n";
+    std::cout << "(user_id:" << this->user_id << "\n";
+    std::cout << " ,c_version:" << static_cast<int>(this->c_version) << "\n";
+    std::cout << " ,opcode:" << static_cast<int>(this->opcode) << "\n";
+    std::cout << " ,name_len:" << this->name_len << "\n";
+    std::cout << " ,file_name:" << this->file_name << "\n";
+    std::cout << " ,size:" << this->size << ")" << std::endl;
 }
 
-void RequestHandler::save_and_backup(RequestType opcode, uint16_t name_len, std::string file_name, uint32_t size, std::string Payload) {
+void RequestHandler::save_and_backup(RequestType opcode, uint16_t name_len, std::string file_name, uint32_t size) {
     std::cout << "USE FUNCTION";
 }
 void RequestHandler::retrieve_file(RequestType opcode, uint16_t name_len, std::string file_name) {
@@ -46,30 +47,39 @@ bool RequestHandler::validate_request_number(RequestType opcode, tcp::socket &so
         try {
             boost::asio::read(sock, boost::asio::buffer(data, NAME_LEN));
         }
-        catch (const boost::system::system_error& e) {
+        catch (...) {
             std::cout << "Timeout error in  read name_len" << std::endl;
-            resh.send_error_message(sock, ResponseType::F_ERROR);
             return false;
 
         }
         std::memcpy(&this->name_len, data, sizeof(uint16_t));
-        std::cout << "Name_len: " << this->name_len << std::endl;
 
         if (this->name_len) {
             clear(data, MESSAGE_MAX_LENGTH);
             try {
                 boost::asio::read(sock, boost::asio::buffer(data, this->name_len));
             }
-            catch (const boost::system::system_error& e) {
+            catch (...) {
                 std::cout << "Timeout error in  read filename" << std::endl;
-                resh.send_error_message(sock, ResponseType::F_ERROR);
                 return false;
 
             }
             this->file_name.assign(reinterpret_cast<const char*>(data), name_len);
-            std::cout << "Name_len: " << this->file_name << std::endl;
         }
-        else { resh.send_error_message(sock, ResponseType::F_ERROR);}
+        else { return false; }
+
+        if (opcode == RequestType::SAVE_FILE) {
+            clear(data, MESSAGE_MAX_LENGTH);
+            try {
+                boost::asio::read(sock, boost::asio::buffer(data, SIZE_));
+            }
+            catch (...) {
+                std::cout << "Timeout error in file size" << std::endl;
+                return false;
+
+            }
+            std::memcpy(&this->size, data, sizeof(uint32_t));
+        }
     case RequestType::DIR:
         return true;
     default:
@@ -80,17 +90,21 @@ bool RequestHandler::validate_request_number(RequestType opcode, tcp::socket &so
 void RequestHandler::manage_request(RequestType opcode) {
 
     switch (opcode) {
+
     case RequestType::SAVE_FILE:
-        std::cout << std::to_string(static_cast<int>(opcode)) + "\n";
+        save_and_backup(opcode, this->name_len, this->file_name, this->size);
             break;
+
     case RequestType::RETRIEVE_FILE:
-        std::cout << std::to_string(static_cast<int>(opcode)) + "\n";
+        retrieve_file(opcode, this->name_len, this->file_name);
             break;
+
     case RequestType::DELETE_FILE:
-        std::cout << std::to_string(static_cast<int>(opcode)) + "\n";
+        delete_file(opcode, this->name_len, this->file_name);
             break;
+
     case RequestType::DIR:
-        std::cout << std::to_string(static_cast<int>(opcode)) + "\n";
+        list_files(opcode);
             break;
     }
 }
@@ -103,9 +117,8 @@ uint8_t RequestHandler::validate_request_header(tcp::socket &sock,ResponseHandle
             boost::asio::read(sock, boost::asio::buffer(data, MIN_REQUEST_SIZE));
         }
         // If error or time out send client error message and retorn 0
-        catch (const boost::system::system_error& e) {
+        catch (...) {
             std::cout << "Timeout error in first header read" << std::endl;
-            resh.send_error_message(sock, ResponseType::F_ERROR);
             return 0;
 
         }
@@ -116,9 +129,11 @@ uint8_t RequestHandler::validate_request_header(tcp::socket &sock,ResponseHandle
 
         std::cout << "Recivied Request: (user_id:" << this->user_id << ", client_version:"
             << static_cast<int>(this->c_version) << ",opcode: " << static_cast<int>(this->opcode) <<
-            ")" << std::endl;
+            ")";
+        std::cout << ", Validating full header.. " <<  std::endl;
         bool is_valid_header = validate_request_number(static_cast<RequestType>(opcode),sock,resh);
-        std::cout << "is_valid_header: " << is_valid_header << std::endl;
+        if (!is_valid_header) { return 0; }
+        
 
     return static_cast<uint8_t>(this->opcode);
 }
