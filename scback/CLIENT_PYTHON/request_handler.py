@@ -81,7 +81,7 @@ class RequestHandler:
     def list_files(self ,opcode):
         print("opcode= ",opcode)
         header = RequestHandler.convert_to_little_endian(self.user_id, helpers.USER_ID_BYTES) + \
-                RequestHandler.convert_to_little_endian(self.version, helpers.VERSION) + \
+                 RequestHandler.convert_to_little_endian(self.version, helpers.VERSION) + \
                  RequestHandler.convert_to_little_endian(opcode, helpers.OP)
 
         print(header)
