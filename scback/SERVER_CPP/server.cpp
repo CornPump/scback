@@ -1,7 +1,7 @@
 #include <iostream>
 #include <boost/asio.hpp>
 #include "request_handler.h"
-
+#include "response_handler.h"
 using boost::asio::ip::tcp;
 
 void clear(uint8_t message[], int length) {
@@ -19,16 +19,13 @@ int main() {
     sock.set_option(boost::asio::detail::socket_option::integer<SOL_SOCKET, SO_RCVTIMEO>{5000});
     uint8_t data[MESSAGE_MAX_LENGTH];
     clear(data, MESSAGE_MAX_LENGTH);
-    try {
-        // Wait for the client to send data
-        RequestHandler rh;
-        int8_t opcode = rh.validate_request_header(std::move(sock));
-
-    }
-    catch (const boost::system::system_error& e) {
-        std::cerr << "Error reading from socket: " << e.what() << std::endl;
-
-    }
+    uint8_t opcode = 0;
+    ResponseHandler resh;
+    // Wait for the client to send data
+    RequestHandler reqh;
+    opcode = reqh.validate_request_header(sock,resh);
+    reqh.print();
+        
     return 0;
 }
 

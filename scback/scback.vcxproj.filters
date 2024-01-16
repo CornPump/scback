@@ -21,6 +21,9 @@
     <ClCompile Include="SERVER_CPP\request_handler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SERVER_CPP\response_handler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SERVER_CPP\helpers_request.h">
@@ -30,6 +33,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SERVER_CPP\helpers_response.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="response_handler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

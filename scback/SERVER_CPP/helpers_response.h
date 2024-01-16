@@ -11,9 +11,9 @@ enum class ResponseType :uint16_t {
     // Transer or Delete operation success
     S_DELETE_OR_TRANSFER = 212,
     // File does not exist
-    F_DIR = 1001,
-    // Client has no files
-    F_NO_FILES = 1002,
+    F_NO_FILE = 1001,
+    // Client has no files; no directory on the server to client
+    F_DIR = 1002,
     // General error
     F_ERROR = 1003
 };
@@ -23,4 +23,6 @@ enum class ResponseType :uint16_t {
 const int8_t SERVER_VERSION = 1;
 const int8_t RESPONSE_STATUS = 2;
 
+// server actual versio
+const int8_t SERVER_CUR_VERSION = 1;
 #endif //HELPERS_RESPONSE_H

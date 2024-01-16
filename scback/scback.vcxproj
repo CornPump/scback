@@ -132,9 +132,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="SERVER_CPP\request_handler.cpp" />
+    <ClCompile Include="SERVER_CPP\response_handler.cpp" />
     <ClCompile Include="SERVER_CPP\server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="response_handler.h" />
     <ClInclude Include="SERVER_CPP\helpers_request.h" />
     <ClInclude Include="SERVER_CPP\helpers_response.h" />
     <ClInclude Include="SERVER_CPP\request_handler.h" />
