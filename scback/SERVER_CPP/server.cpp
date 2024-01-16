@@ -8,7 +8,7 @@
 using boost::asio::ip::tcp;
 
 int main() {
-
+    
     // create backup dir 
     std::string working_dir = std::filesystem::current_path().string();
     std::string backup_dir = create_dir(working_dir, BACKUP_DIR_NAME);
@@ -27,7 +27,7 @@ int main() {
     ResponseHandler resh;
 
     // Wait for the client to send data and validate the header
-    RequestHandler reqh;
+    RequestHandler reqh(backup_dir);
     uint8_t opcode = reqh.validate_request_header(sock,resh);
 
     // if the header is incorrect send error message 

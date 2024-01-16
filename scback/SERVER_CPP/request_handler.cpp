@@ -8,6 +8,11 @@
 #include <cstdint>
 
 
+RequestHandler::RequestHandler(std::string backup_dir) {
+
+    this->backup_dir = backup_dir;
+}
+
 void RequestHandler::clear(uint8_t message[], int length) {
     for (int i = 0; i < length; i++)
         message[i] = '\0';
@@ -17,7 +22,8 @@ void RequestHandler::print() const{
 
     std::cout << "(user_id:" << this->user_id << ", c_version:" << static_cast<int>(this->c_version) << 
                 " ,opcode:" << static_cast<int>(this->opcode) << "\n" << " ,name_len:" << this->name_len << 
-                " ,file_name:" << this->file_name << " ,size:" << this->size << ")" << std::endl;
+                " ,file_name:" << this->file_name << " ,size:" << this->size << 
+                ", backup_dir:" << this->backup_dir << ")" << std::endl;
 }
 
 void RequestHandler::save_and_backup(RequestType opcode, uint16_t name_len, std::string file_name, uint32_t size) {
