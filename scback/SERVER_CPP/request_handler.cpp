@@ -15,12 +15,9 @@ void RequestHandler::clear(uint8_t message[], int length) {
 
 void RequestHandler::print() const{
 
-    std::cout << "(user_id:" << this->user_id << "\n";
-    std::cout << " ,c_version:" << static_cast<int>(this->c_version) << "\n";
-    std::cout << " ,opcode:" << static_cast<int>(this->opcode) << "\n";
-    std::cout << " ,name_len:" << this->name_len << "\n";
-    std::cout << " ,file_name:" << this->file_name << "\n";
-    std::cout << " ,size:" << this->size << ")" << std::endl;
+    std::cout << "(user_id:" << this->user_id << ", c_version:" << static_cast<int>(this->c_version) << 
+                " ,opcode:" << static_cast<int>(this->opcode) << "\n" << " ,name_len:" << this->name_len << 
+                " ,file_name:" << this->file_name << " ,size:" << this->size << ")" << std::endl;
 }
 
 void RequestHandler::save_and_backup(RequestType opcode, uint16_t name_len, std::string file_name, uint32_t size) {
@@ -129,7 +126,7 @@ uint8_t RequestHandler::validate_request_header(tcp::socket &sock,ResponseHandle
 
         std::cout << "Recivied Request: (user_id:" << this->user_id << ", client_version:"
             << static_cast<int>(this->c_version) << ",opcode: " << static_cast<int>(this->opcode) <<
-            ")";
+            ")" << std::endl;
         std::cout << ", Validating full header.. " <<  std::endl;
         bool is_valid_header = validate_request_number(static_cast<RequestType>(opcode),sock,resh);
         if (!is_valid_header) { return 0; }

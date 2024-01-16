@@ -12,7 +12,7 @@ int main() {
     // create backup dir 
     std::string working_dir = std::filesystem::current_path().string();
     std::string backup_dir = create_dir(working_dir, BACKUP_DIR_NAME);
-    std::cout << "Setting backup directory: " << backup_dir << "\Spawning a socket.." << std::endl;
+    std::cout << "Setting backup directory: " << backup_dir << "\nSpawning a socket.." << std::endl;
 
     // set socket info
     int port = 1234;
