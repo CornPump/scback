@@ -31,21 +31,52 @@ class RequestHandler:
         if size == helpers.USER_ID_BYTES:
             to_ret = struct.pack("<I", num)
 
-        if size == helpers.VERSION or size == helpers.OP:
+        if size == helpers.VERSION:
             try:
                 to_ret = struct.pack("<B", num)
             except:
                 print(num)
+        if size == helpers.NAME_LEN:
+            to_ret = struct.pack("<H", num)
+
         return to_ret
 
-    def save_and_backup(self, opcode, name_len: int, file_name: str, size: int, Payload):
-        pass
+    def save_and_backup(self, opcode, file_name: str, size: int, Payload):
+        print("opcode= ", opcode)
+        binary_file_name = file_name.encode('utf-8')
+        header = RequestHandler.convert_to_little_endian(self.user_id, helpers.USER_ID_BYTES) + \
+                 RequestHandler.convert_to_little_endian(self.version, helpers.VERSION) + \
+                 RequestHandler.convert_to_little_endian(opcode, helpers.OP) + \
+                 RequestHandler.convert_to_little_endian(len(file_name), helpers.NAME_LEN) + \
+                 binary_file_name + \
+                 RequestHandler.convert_to_little_endian(size, helpers.SIZE)
 
-    def retrieve_file(self, opcode, name_len: int, file_name: str):
-        pass
+        print(header)
+        return header
 
-    def delete_file(self, opcode, name_len: int, file_name: str):
-        pass
+    def retrieve_file(self, opcode,file_name: str):
+        print("opcode= ", opcode)
+        binary_file_name = file_name.encode('utf-8')
+        header = RequestHandler.convert_to_little_endian(self.user_id, helpers.USER_ID_BYTES) + \
+                 RequestHandler.convert_to_little_endian(self.version, helpers.VERSION) + \
+                 RequestHandler.convert_to_little_endian(opcode, helpers.OP) + \
+                 RequestHandler.convert_to_little_endian(len(file_name), helpers.NAME_LEN) + \
+                 binary_file_name
+
+        print(header)
+        return header
+
+    def delete_file(self, opcode, file_name: str):
+        print("opcode= ", opcode)
+        binary_file_name = file_name.encode('utf-8')
+        header = RequestHandler.convert_to_little_endian(self.user_id, helpers.USER_ID_BYTES) + \
+                 RequestHandler.convert_to_little_endian(self.version, helpers.VERSION) + \
+                 RequestHandler.convert_to_little_endian(opcode, helpers.OP) + \
+                 RequestHandler.convert_to_little_endian(len(file_name), helpers.NAME_LEN) + \
+                 binary_file_name
+
+        print(header)
+        return header
 
     def list_files(self ,opcode):
         print("opcode= ",opcode)
