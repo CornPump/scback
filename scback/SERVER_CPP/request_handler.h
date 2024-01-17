@@ -22,7 +22,7 @@ class RequestHandler {
     void save_and_backup(RequestType opcode, uint16_t name_len, std::string file_name, uint32_t size);
     void retrieve_file(RequestType opcode, uint16_t name_len, std::string file_name);
     void delete_file(RequestType opcode, uint16_t name_len, std::string file_name);
-    void list_files(RequestType opcode);
+    void list_files(tcp::socket& sock, ResponseHandler& resh);
 
 public:
 
@@ -30,7 +30,7 @@ public:
 
     // Function to create and handle requests
     static void clear(uint8_t message[], int length);
-    void manage_request(RequestType opcode);
+    void manage_request(RequestType opcode, tcp::socket& sock, ResponseHandler& resh);
     bool validate_request_number(RequestType opcode, tcp::socket &sock, ResponseHandler& resh);
     uint8_t validate_request_header(tcp::socket &sock, ResponseHandler &resh);
     void print() const;

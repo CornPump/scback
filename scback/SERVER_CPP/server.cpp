@@ -7,6 +7,7 @@
 
 using boost::asio::ip::tcp;
 
+
 int main() {
     
     // create backup dir 
@@ -36,7 +37,7 @@ int main() {
     else {
 
         reqh.print();
-        reqh.manage_request(static_cast<RequestType>(opcode));
+        reqh.manage_request(static_cast<RequestType>(opcode),sock, resh);
     }
     return 0;
 }

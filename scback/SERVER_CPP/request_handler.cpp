@@ -1,6 +1,7 @@
 #include "request_handler.h"
 #include "helpers_request.h" 
 #include "helpers_response.h" 
+#include "response_handler.h"
 #include <string>
 #include <iostream>
 #include <stdexcept>
@@ -35,8 +36,29 @@ void RequestHandler::retrieve_file(RequestType opcode, uint16_t name_len, std::s
 void RequestHandler::delete_file(RequestType opcode, uint16_t name_len, std::string file_name) {
     std::cout << "USE FUNCTION";
 }
-void RequestHandler::list_files(RequestType opcode) {
-    std::cout << "USE FUNCTION";
+void RequestHandler::list_files(tcp::socket& sock, ResponseHandler& resh) {
+
+    std::cout << "In list_files() for user_id:" << this->user_id << std::endl;
+    bool found_dir_flag = false;
+    for (const auto& entry : std::filesystem::directory_iterator(this->backup_dir)) {
+        // Check if it's a regular file or a directory
+        if (entry.is_directory()) {
+
+            uint32_t tmp = std::stoul(entry.path().filename().string());
+            if(tmp == this->user_id){
+                found_dir_flag = true;
+                std::cout << "Found matching file: " << entry.path().filename() << std::endl;
+
+
+
+
+                break;
+            }
+        }
+    }
+    if (!found_dir_flag) {
+        resh.send_error_message(sock, ResponseType::F_DIR);
+    }
 }
 
 bool RequestHandler::validate_request_number(RequestType opcode, tcp::socket &sock, ResponseHandler& resh) {
@@ -90,7 +112,7 @@ bool RequestHandler::validate_request_number(RequestType opcode, tcp::socket &so
     }
 }
 // Function to create and handle requests
-void RequestHandler::manage_request(RequestType opcode) {
+void RequestHandler::manage_request(RequestType opcode, tcp::socket& sock, ResponseHandler& resh) {
 
     switch (opcode) {
 
@@ -107,7 +129,7 @@ void RequestHandler::manage_request(RequestType opcode) {
             break;
 
     case RequestType::DIR:
-        list_files(opcode);
+        list_files(sock, resh);
             break;
     }
 }

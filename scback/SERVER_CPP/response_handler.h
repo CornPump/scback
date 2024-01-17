@@ -3,6 +3,7 @@
 
 #include "helpers_response.h"
 #include <boost/asio.hpp>
+#include <filesystem>
 
 using boost::asio::ip::tcp;
 
