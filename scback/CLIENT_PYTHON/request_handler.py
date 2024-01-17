@@ -1,5 +1,6 @@
 import helpers_request
 import struct
+import helpers_response
 
 class RequestHandler:
 
@@ -95,7 +96,7 @@ class RequestHandler:
         except:
             print("couldn't send message")
             exit()
-        data = sock.recv(helpers_request.REPONSE_MIN_SIZE)
+        data = sock.recv(helpers_response.REPONSE_FIRST_FETCH_SIZE)
         if data:
             print('\nReceived Response', repr(data));
             version, status = struct.unpack('>BH', data)

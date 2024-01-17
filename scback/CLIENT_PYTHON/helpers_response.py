@@ -1,3 +1,12 @@
+# Byte size for header fields, -1 mean byte size varies
+
+VERSION = 1
+STATUS = 2
+NAME_LEN = 2
+FILENAME = -1
+SIZE = 4
+PAYLOAD = -1
+
 # Possible server response
 RESPONSE = {
     # File succefully backed
@@ -14,4 +23,4 @@ RESPONSE = {
     'F_ERROR': 1003
 }
 
-REPONSE_MIN_SIZE = 3
+REPONSE_FIRST_FETCH_SIZE = VERSION + STATUS
