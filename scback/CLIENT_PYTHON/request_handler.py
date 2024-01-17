@@ -6,13 +6,13 @@ class RequestHandler:
     def __init__(self, user_id):
 
         self.user_id = user_id
-        self.version = helpers.VERSION
+        self.version = helpers_request.VERSION
 
         self.requests = {
-            helpers.REQUESTS['SAVE_FILE']: self.save_and_backup,
-            helpers.REQUESTS['RETRIEVE_FILE']: self.retrieve_file,
-            helpers.REQUESTS['DELETE_FILE']: self.delete_file,
-            helpers.REQUESTS['DIR']: self.list_files
+            helpers_request.REQUESTS['SAVE_FILE']: self.save_and_backup,
+            helpers_request.REQUESTS['RETRIEVE_FILE']: self.retrieve_file,
+            helpers_request.REQUESTS['DELETE_FILE']: self.delete_file,
+            helpers_request.REQUESTS['DIR']: self.list_files
         }
 
     def __str__(self):
@@ -28,15 +28,15 @@ class RequestHandler:
     # converts int into little endian
     @staticmethod
     def convert_to_little_endian(num: int, size: int):
-        if size == helpers.USER_ID_BYTES:
+        if size == helpers_request.USER_ID_BYTES:
             to_ret = struct.pack("<I", num)
 
-        if size == helpers.VERSION:
+        if size == helpers_request.VERSION:
             try:
                 to_ret = struct.pack("<B", num)
             except:
                 print(num)
-        if size == helpers.NAME_LEN:
+        if size == helpers_request.NAME_LEN:
             to_ret = struct.pack("<H", num)
 
         return to_ret
@@ -44,12 +44,12 @@ class RequestHandler:
     def save_and_backup(self, opcode, file_name: str, size: int, Payload, sock):
         print("opcode= ", opcode)
         binary_file_name = file_name.encode('utf-8')
-        header = RequestHandler.convert_to_little_endian(self.user_id, helpers.USER_ID_BYTES) + \
-                 RequestHandler.convert_to_little_endian(self.version, helpers.VERSION) + \
-                 RequestHandler.convert_to_little_endian(opcode, helpers.OP) + \
-                 RequestHandler.convert_to_little_endian(len(file_name), helpers.NAME_LEN) + \
+        header = RequestHandler.convert_to_little_endian(self.user_id, helpers_request.USER_ID_BYTES) + \
+                 RequestHandler.convert_to_little_endian(self.version, helpers_request.VERSION) + \
+                 RequestHandler.convert_to_little_endian(opcode, helpers_request.OP) + \
+                 RequestHandler.convert_to_little_endian(len(file_name), helpers_request.NAME_LEN) + \
                  binary_file_name + \
-                 RequestHandler.convert_to_little_endian(size, helpers.SIZE)
+                 RequestHandler.convert_to_little_endian(size, helpers_request.SIZE)
 
         print(header)
         return header
@@ -57,10 +57,10 @@ class RequestHandler:
     def retrieve_file(self, opcode, file_name: str, sock):
         print("opcode= ", opcode)
         binary_file_name = file_name.encode('utf-8')
-        header = RequestHandler.convert_to_little_endian(self.user_id, helpers.USER_ID_BYTES) + \
-                 RequestHandler.convert_to_little_endian(self.version, helpers.VERSION) + \
-                 RequestHandler.convert_to_little_endian(opcode, helpers.OP) + \
-                 RequestHandler.convert_to_little_endian(len(file_name), helpers.NAME_LEN) + \
+        header = RequestHandler.convert_to_little_endian(self.user_id, helpers_request.USER_ID_BYTES) + \
+                 RequestHandler.convert_to_little_endian(self.version, helpers_request.VERSION) + \
+                 RequestHandler.convert_to_little_endian(opcode, helpers_request.OP) + \
+                 RequestHandler.convert_to_little_endian(len(file_name), helpers_request.NAME_LEN) + \
                  binary_file_name
 
         print(header)
@@ -69,10 +69,10 @@ class RequestHandler:
     def delete_file(self, opcode, file_name: str, sock):
         print("opcode= ", opcode)
         binary_file_name = file_name.encode('utf-8')
-        header = RequestHandler.convert_to_little_endian(self.user_id, helpers.USER_ID_BYTES) + \
-                 RequestHandler.convert_to_little_endian(self.version, helpers.VERSION) + \
-                 RequestHandler.convert_to_little_endian(opcode, helpers.OP) + \
-                 RequestHandler.convert_to_little_endian(len(file_name), helpers.NAME_LEN) + \
+        header = RequestHandler.convert_to_little_endian(self.user_id, helpers_request.USER_ID_BYTES) + \
+                 RequestHandler.convert_to_little_endian(self.version, helpers_request.VERSION) + \
+                 RequestHandler.convert_to_little_endian(opcode, helpers_request.OP) + \
+                 RequestHandler.convert_to_little_endian(len(file_name), helpers_request.NAME_LEN) + \
                  binary_file_name
 
         print(header)
@@ -80,12 +80,12 @@ class RequestHandler:
 
     def list_files(self, opcode, sock):
         print("Creating list_files() request..")
-        header = RequestHandler.convert_to_little_endian(self.user_id, helpers.USER_ID_BYTES) + \
-                 RequestHandler.convert_to_little_endian(self.version, helpers.VERSION) + \
-                 RequestHandler.convert_to_little_endian(opcode, helpers.OP)
+        header = RequestHandler.convert_to_little_endian(self.user_id, helpers_request.USER_ID_BYTES) + \
+                 RequestHandler.convert_to_little_endian(self.version, helpers_request.VERSION) + \
+                 RequestHandler.convert_to_little_endian(opcode, helpers_request.OP)
 
         print('Binary_header:',header)
-        # unpack helpers.REQUESTS['DIR']
+        # unpack helpers_request.REQUESTS['DIR']
         user_id, c_version, opcode = struct.unpack('<IBB', header)
         print(f'User_id:{user_id}, Client_version:{c_version}, Opcode:{opcode}')
 
@@ -95,22 +95,22 @@ class RequestHandler:
         except:
             print("couldn't send message")
             exit()
-        data = sock.recv(helpers.REPONSE_MIN_SIZE)
+        data = sock.recv(helpers_request.REPONSE_MIN_SIZE)
         if data:
             print('\nReceived Response', repr(data));
             version, status = struct.unpack('>BH', data)
             print(f'Version={version}, Opcode={status}')
 
             # General error response, bad client request
-            if status == helpers.RESPONSE['F_ERROR']:
+            if status == helpers_request.RESPONSE['F_ERROR']:
                 print("Server Response with general error due to bad request or timeout")
                 exit()
             # Client has no directory on server
-            elif status == helpers.RESPONSE['F_DIR']:
+            elif status == helpers_request.RESPONSE['F_DIR']:
                 print(f"Received Server Response, no directory for client {self.user_id}\n"
-                      f"Need to create backup files before sending {helpers.RESPONSE['F_DIR']} Request")
+                      f"Need to create backup files before sending {helpers_request.RESPONSE['F_DIR']} Request")
                 return
-            elif status == helpers.RESPONSE['s_DIR']:
+            elif status == helpers_request.RESPONSE['s_DIR']:
                 data = sock.recv(2)
                 name_len = struct.unpack('>H', data)
                 # unpack full response here and do w/e they ask us

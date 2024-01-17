@@ -7,7 +7,7 @@ import request_handler as rh
 if __name__ == "__main__":
 
     # create random user id
-    user_id = random.randint(1, helpers.MAX_USER_ID)
+    user_id = random.randint(1, helpers_request.MAX_USER_ID)
     # user_id = 4261025877
     # create client class handler
     client = rh.RequestHandler(user_id)
@@ -42,7 +42,7 @@ if __name__ == "__main__":
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             sock.connect((HOST, PORT))
             #client.create_request(helpers.REQUESTS['DIR'], sock)
-            data = sock.recv(helpers.MESSAGE_MAX_SIZE)
+            data = sock.recv(helpers_request.MESSAGE_MAX_SIZE)
             print(data)
             print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
             print(data.decode('utf-8'))
