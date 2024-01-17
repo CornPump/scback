@@ -15,7 +15,7 @@ MAX_USER_ID = (2 ** (USER_ID_BYTES*8)) -1
 
 CLIENT_VERSION = 1
 
-MESSAGE_MAX_SIZE = 1024
+MESSAGE_MAX_SIZE = 2048
 
 # Possible client requests
 REQUESTS = {
@@ -28,5 +28,8 @@ REQUESTS = {
     # returns list of all files back-uped by the user on the server
     'DIR': 202
 }
+
+
+
 
 
