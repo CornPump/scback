@@ -27,13 +27,13 @@ void RequestHandler::print() const{
                 ", backup_dir:" << this->backup_dir << ")" << std::endl;
 }
 
-void RequestHandler::save_and_backup(RequestType opcode, uint16_t name_len, std::string file_name, uint32_t size) {
+void RequestHandler::save_and_backup(tcp::socket& sock, ResponseHandler& resh) {
     std::cout << "USE FUNCTION";
 }
-void RequestHandler::retrieve_file(RequestType opcode, uint16_t name_len, std::string file_name) {
+void RequestHandler::retrieve_file(tcp::socket& sock, ResponseHandler& resh) {
     std::cout << "USE FUNCTION";
 }
-void RequestHandler::delete_file(RequestType opcode, uint16_t name_len, std::string file_name) {
+void RequestHandler::delete_file(tcp::socket& sock, ResponseHandler& resh) {
     std::cout << "USE FUNCTION";
 }
 void RequestHandler::list_files(tcp::socket& sock, ResponseHandler& resh) {
@@ -117,15 +117,15 @@ void RequestHandler::manage_request(RequestType opcode, tcp::socket& sock, Respo
     switch (opcode) {
 
     case RequestType::SAVE_FILE:
-        save_and_backup(opcode, this->name_len, this->file_name, this->size);
+        save_and_backup(sock, resh);
             break;
 
     case RequestType::RETRIEVE_FILE:
-        retrieve_file(opcode, this->name_len, this->file_name);
+        retrieve_file(sock, resh);
             break;
 
     case RequestType::DELETE_FILE:
-        delete_file(opcode, this->name_len, this->file_name);
+        delete_file(sock, resh);
             break;
 
     case RequestType::DIR:

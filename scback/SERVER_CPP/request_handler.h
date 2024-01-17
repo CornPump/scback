@@ -19,9 +19,9 @@ class RequestHandler {
     std::string backup_dir;
 
 
-    void save_and_backup(RequestType opcode, uint16_t name_len, std::string file_name, uint32_t size);
-    void retrieve_file(RequestType opcode, uint16_t name_len, std::string file_name);
-    void delete_file(RequestType opcode, uint16_t name_len, std::string file_name);
+    void save_and_backup(tcp::socket& sock, ResponseHandler& resh);
+    void retrieve_file(tcp::socket& sock, ResponseHandler& resh);
+    void delete_file(tcp::socket& sock, ResponseHandler& resh);
     void list_files(tcp::socket& sock, ResponseHandler& resh);
 
 public:
