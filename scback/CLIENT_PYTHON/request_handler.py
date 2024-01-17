@@ -1,6 +1,7 @@
 import helpers_request
 import struct
 import helpers_response
+import response_handler
 
 class RequestHandler:
 
@@ -96,27 +97,18 @@ class RequestHandler:
         except:
             print("couldn't send message")
             exit()
-        data = sock.recv(helpers_response.REPONSE_FIRST_FETCH_SIZE)
-        if data:
-            print('\nReceived Response', repr(data));
-            version, status = struct.unpack('>BH', data)
-            print(f'Version={version}, Opcode={status}')
-
-            # General error response, bad client request
-            if status == helpers_request.RESPONSE['F_ERROR']:
-                print("Server Response with general error due to bad request or timeout")
-                exit()
-            # Client has no directory on server
-            elif status == helpers_request.RESPONSE['F_DIR']:
-                print(f"Received Server Response, no directory for client {self.user_id}\n"
-                      f"Need to create backup files before sending {helpers_request.RESPONSE['F_DIR']} Request")
-                return
-            elif status == helpers_request.RESPONSE['s_DIR']:
-                data = sock.recv(2)
-                name_len = struct.unpack('>H', data)
-                # unpack full response here and do w/e they ask us
-                print()
-            else:
-                print("Unrecognized Response type exiting client app..")
-                exit()
+        reqh = response_handler.ResponseHandler(sock)
+        reqh.read_response_status()
+        # Client has no directory on server
+        if reqh.status == helpers_request.RESPONSE['F_DIR']:
+            print(f"Received Server Response, no directory for client {self.user_id}\n"
+                  f"Need to create backup files before sending {helpers_request.RESPONSE['F_DIR']} Request")
+            return
+        elif reqh.status == helpers_request.RESPONSE['S_DIR']:
+            reqh.read_second_time_full_header()
+            # unpack full response here and do w/e they ask us
+            print()
+        else:
+            print("Unrecognized Response type exiting client app..")
+            exit()
 

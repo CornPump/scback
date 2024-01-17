@@ -22,5 +22,3 @@ RESPONSE = {
     # General error
     'F_ERROR': 1003
 }
-
-REPONSE_FIRST_FETCH_SIZE = VERSION + STATUS
