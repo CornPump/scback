@@ -1,11 +1,11 @@
 import socket
 import random
 import helpers_request
-import struct
 import request_handler as rh
+import operation
+
 
 if __name__ == "__main__":
-
     # create random user id
     user_id = random.randint(1, helpers_request.MAX_USER_ID)
     # user_id = 4261025877
@@ -42,10 +42,7 @@ if __name__ == "__main__":
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             sock.connect((HOST, PORT))
             #client.create_request(helpers.REQUESTS['DIR'], sock)
-            data = sock.recv(helpers_request.MESSAGE_MAX_SIZE)
-            print(data)
-            print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            print(data.decode('utf-8'))
+            operation.send_file('just_got_it', sock)
     except:
         print("Could not open socket with ", HOST);
         exit()

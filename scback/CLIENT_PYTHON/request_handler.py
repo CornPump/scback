@@ -2,6 +2,7 @@ import helpers_request
 import struct
 import helpers_response
 import response_handler
+import operation
 
 class RequestHandler:
 
@@ -97,15 +98,15 @@ class RequestHandler:
         except:
             print("couldn't send message")
             exit()
-        reqh = response_handler.ResponseHandler(sock)
-        reqh.read_response_status()
+        resh = response_handler.ResponseHandler(sock)
+        resh.read_response_status()
         # Client has no directory on server
-        if reqh.status == helpers_request.RESPONSE['F_DIR']:
+        if resh.status == helpers_request.RESPONSE['F_DIR']:
             print(f"Received Server Response, no directory for client {self.user_id}\n"
                   f"Need to create backup files before sending {helpers_request.RESPONSE['F_DIR']} Request")
             return
-        elif reqh.status == helpers_request.RESPONSE['S_DIR']:
-            reqh.read_second_time_full_header()
+        elif resh.status == helpers_request.RESPONSE['S_DIR']:
+            resh.read_second_time_full_header()
             # unpack full response here and do w/e they ask us
             print()
         else:
