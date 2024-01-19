@@ -3,14 +3,14 @@ import helpers_request
 def receive_file(file_name,socket,size):
 
     try:
-        with open(file_name,'wb') as f:
+        with open(file_name,'w') as f:
 
             total_received = 0
 
             while total_received < size:
                 bytes_to_receive = min(helpers_request.MESSAGE_MAX_SIZE, size - total_received)
                 data = socket.recv(bytes_to_receive)
-                f.write(data)
+                f.write(data.decode('utf-8'))
                 total_received += len(data)
 
     except Exception as e:
@@ -38,3 +38,12 @@ def send_file(filename,socket):
 
     except Exception as e:
         print(f"Error sending file in send_file():\n {e}")
+
+
+def print_server_dir_file(path):
+    with open(path, 'r') as file:
+        for line in file:
+            if (line and line != '\n'):
+                print(line.strip())
+
+

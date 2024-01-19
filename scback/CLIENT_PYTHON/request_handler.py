@@ -105,8 +105,10 @@ class RequestHandler:
             return
         elif resh.status == helpers_response.RESPONSE['S_DIR']:
             resh.read_second_time_full_header()
-            print(f"resh = {resh}")
+            print(f"Server Response = {resh}")
             operation.receive_file(resh.file_name,sock,resh.size)
+            print("List of files backed by the server:")
+            operation.print_server_dir_file(resh.file_name)
         else:
             print("Unrecognized Response type exiting client app..")
             exit()
