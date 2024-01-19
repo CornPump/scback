@@ -14,10 +14,11 @@ class ResponseHandler {
 	uint16_t status;
 	uint16_t name_len;
 	std::string filename;
-	uint32_t size;
+	uint32_t size =0;
 
 public:
 
+	uint8_t get_server_version();
 	void set_status(const uint16_t status);
 	uint16_t get_status() const;
 	void set_name_len(const uint16_t len);
@@ -27,6 +28,8 @@ public:
 	void set_size(const uint32_t size);
 	uint32_t get_size() const;
 	void send_error_message(tcp::socket& sock, ResponseType error);
+	void send_success_header(tcp::socket& sock);
+	void print() const;
 
 
 };

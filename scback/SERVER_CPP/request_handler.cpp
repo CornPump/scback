@@ -1,7 +1,7 @@
 #include "request_handler.h"
+#include "response_handler.h"
 #include "helpers_request.h" 
 #include "helpers_response.h" 
-#include "response_handler.h"
 #include "operation.h"
 #include <string>
 #include <iostream>
@@ -51,22 +51,31 @@ void RequestHandler::list_files(tcp::socket& sock) {
 
             // If found fetch all files in the directory and write them into a file
             if(dir_name == this->user_id){
+
+                const int len_size = 32;
                 found_dir_flag = true;
                 std::cout << "Found matching file: " << entry.path().filename() << std::endl;
 
-                std::string file_name = generate_random_name(32);
+                std::string file_name = generate_random_name(len_size);
                 write_names_to_file(get_dir_files(entry.path().filename().string()), file_name);
 
+                ResponseHandler resh;
 
-                // After fetching generate random 32 bytes file name and send it 
-                /*std::string
+                resh.set_status(static_cast<uint8_t>(ResponseType::S_DIR));
+                resh.set_name_len(len_size);
+                resh.set_filename(file_name);
 
-
-                break;*/
+                std::filesystem::path full_path = std::filesystem::path(std::filesystem::current_path()) / file_name;
+                resh.set_size(static_cast<uint32_t>(get_file_size(full_path.string())));
+                
+                resh.print();
+                resh.send_success_header(sock);
+                break;
             }
         }
     }
     if (!found_dir_flag) {
+        ResponseHandler resh;
         resh.send_error_message(sock, ResponseType::F_DIR);
     }
 }
@@ -165,7 +174,7 @@ uint8_t RequestHandler::validate_request_header(tcp::socket &sock,ResponseHandle
         std::cout << "Recivied Request: (user_id:" << this->user_id << ", client_version:"
             << static_cast<int>(this->c_version) << ",opcode: " << static_cast<int>(this->opcode) <<
             ")" << std::endl;
-        std::cout << ", Validating full header.. " <<  std::endl;
+        std::cout << "Validating full header.. " <<  std::endl;
         bool is_valid_header = validate_request_number(static_cast<RequestType>(opcode),sock,resh);
         if (!is_valid_header) { return 0; }
         

@@ -5,6 +5,18 @@
 #include <stdexcept>
 
 
+void ResponseHandler::print() const {
+
+	std::cout << "(server_version:" << this->server_version << ", status:" << static_cast<int>(this->status) <<
+		" ,name_len:" << static_cast<int>(this->name_len) << "\n" << " ,file_name:" << this->filename <<
+		" ,size:" << static_cast<int>(this->size) << ")" << std::endl;
+}
+
+
+uint8_t ResponseHandler::get_server_version() {
+	return server_version;
+}
+
 void ResponseHandler::set_status(const uint16_t status) {
 
 	this->status = status;
@@ -48,8 +60,8 @@ uint32_t ResponseHandler::get_size() const {
 void ResponseHandler::send_error_message(tcp::socket &sock, ResponseType error) {
 
 	std::vector<uint8_t> message;
-	message.push_back(this->server_version);
-	uint16_t value = static_cast<int>(error);
+	message.push_back(this->get_server_version());
+	uint16_t value = static_cast<uint16_t>(error);
 	value = htons(value);
 
 	message.insert(message.end(), reinterpret_cast<uint8_t*>(&value),
@@ -66,6 +78,33 @@ void ResponseHandler::send_error_message(tcp::socket &sock, ResponseType error) 
 	}
 
 	// Send the message using boost::asio::write
+	boost::asio::write(sock, boost::asio::buffer(message));
+
+}
+
+void ResponseHandler::send_success_header(tcp::socket& sock) {
+	
+	std::vector<uint8_t> message;
+
+	message.push_back(this->get_server_version());
+
+	status = htons(this->get_status());
+	message.insert(message.end(), reinterpret_cast<uint8_t*>(&status),
+	reinterpret_cast<uint8_t*>(&status) + sizeof(uint16_t));
+
+	name_len = htons(this->get_name_len());
+	message.insert(message.end(), reinterpret_cast<uint8_t*>(&name_len),
+		reinterpret_cast<uint8_t*>(&name_len) + sizeof(uint16_t));
+
+	message.insert(message.end(), this->filename.begin(), this->filename.end());
+
+
+	if (this->get_size()) {
+		size = htonl(this->size);
+		message.insert(message.end(), reinterpret_cast<uint8_t*>(&size),
+			reinterpret_cast<uint8_t*>(&size) + sizeof(uint32_t));
+	}
+	
 	boost::asio::write(sock, boost::asio::buffer(message));
 
 }

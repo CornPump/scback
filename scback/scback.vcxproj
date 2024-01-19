@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="SERVER_CPP\operation.cpp" />
     <ClCompile Include="SERVER_CPP\request_handler.cpp" />
     <ClCompile Include="SERVER_CPP\response_handler.cpp" />
     <ClCompile Include="SERVER_CPP\server.cpp" />

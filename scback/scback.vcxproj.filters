@@ -24,6 +24,9 @@
     <ClCompile Include="SERVER_CPP\response_handler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SERVER_CPP\operation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SERVER_CPP\helpers_request.h">
