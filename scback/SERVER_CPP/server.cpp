@@ -9,6 +9,20 @@ using boost::asio::ip::tcp;
 
 
 int main() {
+    
+    for (int i = 0; i < 10; i++){
+        std::cout << generate_random_name(32) << "\n";
+    }
+    exit(1);
+    std::string path = R"(C:\Users\Fisher\source\repos\scback\scback\SERVER_CPP\)";
+    std::vector<std::string> vec = get_dir_files(path);
+    /*bool exist = std::filesystem::exists(path);
+    std::cout << exist << std::endl;
+    exit(1);
+    std::cout << path << std::endl;*/
+    long long tmp = 148434;
+    //std::cout << tmp;
+    
 
     // create backup dir 
     std::string working_dir = std::filesystem::current_path().string();
@@ -37,7 +51,7 @@ int main() {
     else {
 
         reqh.print();
-        reqh.manage_request(static_cast<RequestType>(opcode),sock, resh);
+        reqh.manage_request(static_cast<RequestType>(opcode),sock);
     }
     return 0;
 }

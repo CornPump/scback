@@ -22,6 +22,10 @@ enum class ResponseType :uint16_t {
 
 const int8_t SERVER_VERSION = 1;
 const int8_t RESPONSE_STATUS = 2;
+const int8_t NAME_LEN = 2;
+const int8_t FILE_NAME = -1;
+const int8_t SIZE = 4;
+const int8_t PAYLOAD = -1;
 
 // server actual versio
 const int8_t SERVER_CUR_VERSION = 1;

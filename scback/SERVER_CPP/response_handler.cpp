@@ -5,6 +5,46 @@
 #include <stdexcept>
 
 
+void ResponseHandler::set_status(const uint16_t status) {
+
+	this->status = status;
+}
+
+uint16_t ResponseHandler::get_status() const {
+
+	return status;
+}
+
+void ResponseHandler::set_name_len(const uint16_t len) {
+
+	this->name_len = len;
+}
+
+uint16_t ResponseHandler::get_name_len() const {
+
+	return name_len;
+}
+
+void ResponseHandler::set_filename(const std::string& name) {
+
+	this->filename = name;
+}
+
+std::string ResponseHandler::get_filename() const {
+
+	return filename;
+}
+
+void ResponseHandler::set_size(const uint32_t size) {
+
+	this->size = size;
+}
+
+uint32_t ResponseHandler::get_size() const {
+	return size;
+}
+
+
 void ResponseHandler::send_error_message(tcp::socket &sock, ResponseType error) {
 
 	std::vector<uint8_t> message;

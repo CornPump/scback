@@ -2,6 +2,7 @@
 #include "helpers_request.h" 
 #include "helpers_response.h" 
 #include "response_handler.h"
+#include "operation.h"
 #include <string>
 #include <iostream>
 #include <stdexcept>
@@ -27,32 +28,41 @@ void RequestHandler::print() const{
                 ", backup_dir:" << this->backup_dir << ")" << std::endl;
 }
 
-void RequestHandler::save_and_backup(tcp::socket& sock, ResponseHandler& resh) {
+void RequestHandler::save_and_backup(tcp::socket& sock) {
     std::cout << "USE FUNCTION";
 }
-void RequestHandler::retrieve_file(tcp::socket& sock, ResponseHandler& resh) {
+void RequestHandler::retrieve_file(tcp::socket& sock) {
     std::cout << "USE FUNCTION";
 }
-void RequestHandler::delete_file(tcp::socket& sock, ResponseHandler& resh) {
+void RequestHandler::delete_file(tcp::socket& sock) {
     std::cout << "USE FUNCTION";
 }
-void RequestHandler::list_files(tcp::socket& sock, ResponseHandler& resh) {
+void RequestHandler::list_files(tcp::socket& sock) {
 
     std::cout << "In list_files() for user_id:" << this->user_id << std::endl;
     bool found_dir_flag = false;
+
+    // Search for directory with user_id as name
     for (const auto& entry : std::filesystem::directory_iterator(this->backup_dir)) {
         // Check if it's a regular file or a directory
         if (entry.is_directory()) {
 
-            uint32_t tmp = std::stoul(entry.path().filename().string());
-            if(tmp == this->user_id){
+            uint32_t dir_name = std::stoul(entry.path().filename().string());
+
+            // If found fetch all files in the directory and write them into a file
+            if(dir_name == this->user_id){
                 found_dir_flag = true;
                 std::cout << "Found matching file: " << entry.path().filename() << std::endl;
 
+                std::string file_name = generate_random_name(32);
+                write_names_to_file(get_dir_files(entry.path().filename().string()), file_name);
 
 
+                // After fetching generate random 32 bytes file name and send it 
+                /*std::string
 
-                break;
+
+                break;*/
             }
         }
     }
@@ -112,24 +122,24 @@ bool RequestHandler::validate_request_number(RequestType opcode, tcp::socket &so
     }
 }
 // Function to create and handle requests
-void RequestHandler::manage_request(RequestType opcode, tcp::socket& sock, ResponseHandler& resh) {
+void RequestHandler::manage_request(RequestType opcode, tcp::socket& sock) {
 
     switch (opcode) {
 
     case RequestType::SAVE_FILE:
-        save_and_backup(sock, resh);
+        save_and_backup(sock);
             break;
 
     case RequestType::RETRIEVE_FILE:
-        retrieve_file(sock, resh);
+        retrieve_file(sock);
             break;
 
     case RequestType::DELETE_FILE:
-        delete_file(sock, resh);
+        delete_file(sock);
             break;
 
     case RequestType::DIR:
-        list_files(sock, resh);
+        list_files(sock);
             break;
     }
 }

@@ -19,10 +19,10 @@ class RequestHandler {
     std::string backup_dir;
 
 
-    void save_and_backup(tcp::socket& sock, ResponseHandler& resh);
-    void retrieve_file(tcp::socket& sock, ResponseHandler& resh);
-    void delete_file(tcp::socket& sock, ResponseHandler& resh);
-    void list_files(tcp::socket& sock, ResponseHandler& resh);
+    void save_and_backup(tcp::socket& sock);
+    void retrieve_file(tcp::socket& sock);
+    void delete_file(tcp::socket& sock);
+    void list_files(tcp::socket& sock);
 
 public:
 
@@ -30,7 +30,7 @@ public:
 
     // Function to create and handle requests
     static void clear(uint8_t message[], int length);
-    void manage_request(RequestType opcode, tcp::socket& sock, ResponseHandler& resh);
+    void manage_request(RequestType opcode, tcp::socket& sock);
     bool validate_request_number(RequestType opcode, tcp::socket &sock, ResponseHandler& resh);
     uint8_t validate_request_header(tcp::socket &sock, ResponseHandler &resh);
     void print() const;

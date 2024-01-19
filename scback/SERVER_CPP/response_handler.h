@@ -10,10 +10,23 @@ using boost::asio::ip::tcp;
 
 class ResponseHandler {
 
-public:
 	uint8_t server_version = SERVER_CUR_VERSION;
+	uint16_t status;
+	uint16_t name_len;
+	std::string filename;
+	uint32_t size;
 
-	void send_error_message(tcp::socket &sock, ResponseType error);
+public:
+
+	void set_status(const uint16_t status);
+	uint16_t get_status() const;
+	void set_name_len(const uint16_t len);
+	uint16_t get_name_len() const;
+	void set_filename(const std::string& name);
+	std::string get_filename() const;
+	void set_size(const uint32_t size);
+	uint32_t get_size() const;
+	void send_error_message(tcp::socket& sock, ResponseType error);
 
 
 };
