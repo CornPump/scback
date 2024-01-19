@@ -87,10 +87,8 @@ class RequestHandler:
                  RequestHandler.convert_to_little_endian(self.version, helpers_request.VERSION) + \
                  RequestHandler.convert_to_little_endian(opcode, helpers_request.OP)
 
-        print('Binary_header:',header)
         # unpack helpers_request.REQUESTS['DIR']
         user_id, c_version, opcode = struct.unpack('<IBB', header)
-        print(f'User_id:{user_id}, Client_version:{c_version}, Opcode:{opcode}')
 
         message = header
         try:
@@ -101,14 +99,14 @@ class RequestHandler:
         resh = response_handler.ResponseHandler(sock)
         resh.read_response_status()
         # Client has no directory on server
-        if resh.status == helpers_request.RESPONSE['F_DIR']:
-            print(f"Received Server Response, no directory for client {self.user_id}\n"
-                  f"Need to create backup files before sending {helpers_request.RESPONSE['F_DIR']} Request")
+        if resh.status == helpers_response.RESPONSE['F_DIR']:
+            print(f"Received Server Response {helpers_response.RESPONSE['F_DIR']}: no directory for client {self.user_id}\n"
+                  f"Need to create backup files before sending {helpers_request.REQUESTS['DIR']} Request")
             return
-        elif resh.status == helpers_request.RESPONSE['S_DIR']:
+        elif resh.status == helpers_response.RESPONSE['S_DIR']:
             resh.read_second_time_full_header()
-            # unpack full response here and do w/e they ask us
-            print()
+            print(f"resh = {resh}")
+            operation.receive_file(resh.file_name,sock,resh.size)
         else:
             print("Unrecognized Response type exiting client app..")
             exit()

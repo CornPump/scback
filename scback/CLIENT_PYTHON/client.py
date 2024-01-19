@@ -8,6 +8,7 @@ import operation
 if __name__ == "__main__":
     # create random user id
     user_id = random.randint(1, helpers_request.MAX_USER_ID)
+    user_id = 1162125029
     # user_id = 4261025877
     # create client class handler
     client = rh.RequestHandler(user_id)
@@ -38,12 +39,14 @@ if __name__ == "__main__":
     print(f'{category1} {category2} {category3} {category4} {file_name}')
     """
 
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        try:
             sock.connect((HOST, PORT))
-            #client.create_request(helpers.REQUESTS['DIR'], sock)
-            operation.send_file('just_got_it', sock)
-    except:
-        print("Could not open socket with ", HOST);
-        exit()
+        except:
+            print("Could not open socket with ", HOST);
+            exit()
+        client.create_request(helpers_request.REQUESTS['DIR'], sock)
+        #operation.send_file('just_got_it', sock)
+
 

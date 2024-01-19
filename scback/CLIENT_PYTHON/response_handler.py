@@ -17,14 +17,13 @@ class ResponseHandler:
                f'name_len={self.name_len}, filename={self.name_len}, size={self.size}'
 
     def read_response_status(self):
-        data = self.sock.recv(helpers_response.VERSION + helpers_response.STATUS)
+        data = self.socket.recv(helpers_response.VERSION + helpers_response.STATUS)
 
         if data:
             print('\nReceived Response', repr(data));
-            self.version, self.status = struct.unpack('>BH', data)
-            print(f'Version={self.version}, Opcode={self.status}')
+            self.server_version, self.status = struct.unpack('>BH', data)
             # General error response, bad client request
-            if self.status == helpers_request.RESPONSE['F_ERROR']:
+            if self.status == helpers_response.RESPONSE['F_ERROR']:
                 print("Server Response with general error due to bad request or timeout")
                 exit()
         else:
@@ -34,9 +33,9 @@ class ResponseHandler:
     def read_second_time_full_header(self):
 
         self.read_second_time_part_header()
-        data = self.sock.recv(helpers_response.SIZE)
+        data = self.socket.recv(helpers_response.SIZE)
         if data:
-            self.size = struct.unpack('>I', data)
+            self.size = struct.unpack('>I', data)[0]
         else:
             print("Did not receive respond from the server in read_second_time_full_header(), shutting app")
             exit()
@@ -45,10 +44,10 @@ class ResponseHandler:
 
     def read_second_time_part_header(self):
 
-        data = self.sock.recv(helpers_response.NAME_LEN)
+        data = self.socket.recv(helpers_response.NAME_LEN)
         if data:
-            self.name_len = struct.unpack('>H', data)
-            data2 = self.sock.recv(self.name_len)
+            self.name_len = struct.unpack('>H', data)[0]
+            data2 = self.socket.recv(self.name_len)
             if data2:
                 self.file_name = data2.decode("utf-8")
             else:

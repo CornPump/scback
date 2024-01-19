@@ -14,7 +14,7 @@ def receive_file(file_name,socket,size):
                 total_received += len(data)
 
     except Exception as e:
-        print("Couldn't read file in receive_file() due to error:\n",e)
+        print(f"Couldn't read file {file_name} in receive_file() due to error:\n",e)
 
 
 def get_file_size(file):
