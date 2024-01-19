@@ -4,10 +4,61 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
+#include <ctime>
 #include <boost/asio.hpp>
 #include "helpers_request.h"
 
 std::string BACKUP_DIR_NAME("backup_server");
+
+
+void write_names_to_file(const std::vector<std::string>& fileNames, const std::string& outputFileName) {
+    std::ofstream file(outputFileName);
+
+    if (!file.is_open()) {
+        std::cerr << "Error opening output file: " << outputFileName << std::endl;
+        return;
+    }
+
+    for (const auto& fileName : fileNames) {
+        file << fileName << "\n";
+    }
+
+    std::cout << "File write complete." << std::endl;
+}
+
+std::vector<std::string> get_dir_files(std::string dir_name) {
+
+    std::vector<std::string> to_ret;
+
+    for (const auto& entry : std::filesystem::directory_iterator(dir_name)) {
+
+        if (!entry.is_directory()) {
+            to_ret.push_back(entry.path().filename().string());
+        }
+    }
+    return to_ret;
+}
+
+
+std::string generate_random_name(const int len) {
+    
+    std::string to_ret;
+    
+    const char characters[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const int num_characters = sizeof(characters) - 1;
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+    for (int i = 0; i < len; i++) {
+
+        
+        int random_index = std::rand() % num_characters;
+        to_ret += characters[random_index];
+    
+    }
+
+    return to_ret;
+
+}
 
 std::string create_dir(const std::string& path, const std::string& new_name) {
     std::filesystem::path new_dir = std::filesystem::path(path) / new_name;
