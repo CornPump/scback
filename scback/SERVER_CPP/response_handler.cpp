@@ -5,9 +5,15 @@
 #include <stdexcept>
 
 
+ResponseHandler::ResponseHandler() {
+
+	this->server_version = SERVER_CUR_VERSION;
+	this->size = 0;
+}
+
 void ResponseHandler::print() const {
 
-	std::cout << "(server_version:" << this->server_version << ", status:" << static_cast<int>(this->status) <<
+	std::cout << "(server_version:" << static_cast<int>(this->server_version) << ", status:" << static_cast<int>(this->status) <<
 		" ,name_len:" << static_cast<int>(this->name_len) << "\n" << " ,file_name:" << this->filename <<
 		" ,size:" << static_cast<int>(this->size) << ")" << std::endl;
 }
@@ -105,6 +111,7 @@ void ResponseHandler::send_success_header(tcp::socket& sock) {
 			reinterpret_cast<uint8_t*>(&size) + sizeof(uint32_t));
 	}
 	
+	std::cout << "Sending Success Response" << std::endl;
 	boost::asio::write(sock, boost::asio::buffer(message));
 
 }

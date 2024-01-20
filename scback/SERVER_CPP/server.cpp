@@ -54,7 +54,14 @@ int main() {
         reqh.print();
         reqh.manage_request(static_cast<RequestType>(opcode),sock);
     }
+/*
+    int e = 0;
+
+    while (!e) {
+        std::cin >> e;
+    }
     return 0;
+    */
 }
 
 

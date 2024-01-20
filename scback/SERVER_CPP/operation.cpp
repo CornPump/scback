@@ -135,3 +135,11 @@ void receive_file(const std::string& filename, boost::asio::ip::tcp::socket& soc
     }
 }
 
+bool check_file_exist(std::filesystem::path file_path) {
+
+    if (std::filesystem::exists(file_path)) {
+        return true;
+    }
+    return false;
+
+}

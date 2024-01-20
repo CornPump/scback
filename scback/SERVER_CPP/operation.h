@@ -19,5 +19,6 @@ std::string create_dir(const std::string& path, const std::string& new_name);
 long long get_file_size(const std::string& filename);
 void send_file(const std::string& filename, tcp::socket& socket, uint32_t size);
 void receive_file(const std::string& filename, tcp::socket& socket, uint32_t size);
+bool check_file_exist(std::filesystem::path file_path);
 
 #endif // OPERATION_H

@@ -10,14 +10,15 @@ using boost::asio::ip::tcp;
 
 class ResponseHandler {
 
-	uint8_t server_version = SERVER_CUR_VERSION;
+	uint8_t server_version;
 	uint16_t status;
 	uint16_t name_len;
 	std::string filename;
-	uint32_t size =0;
+	uint32_t size;
 
 public:
 
+	ResponseHandler();
 	uint8_t get_server_version();
 	void set_status(const uint16_t status);
 	uint16_t get_status() const;
