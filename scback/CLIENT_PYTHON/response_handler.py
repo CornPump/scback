@@ -14,7 +14,7 @@ class ResponseHandler:
 
     def __str__(self):
         return f'server_version={self.server_version}, status={self.status}, ' \
-               f'name_len={self.name_len}, filename={self.name_len}, size={self.size}'
+               f'name_len={self.name_len}, filename={self.file_name}, size={self.size}'
 
     def read_response_status(self):
         data = self.socket.recv(helpers_response.VERSION + helpers_response.STATUS)
@@ -24,8 +24,7 @@ class ResponseHandler:
             self.server_version, self.status = struct.unpack('>BH', data)
             # General error response, bad client request
             if self.status == helpers_response.RESPONSE['F_ERROR']:
-                print("Server Response with general error due to bad request or timeout")
-                exit()
+                print("Server Response with general error due to bad request or timeout: Response ",self.status)
         else:
             print("Did not receive respond from the server in read_reponse_status(), shutting app")
             exit()

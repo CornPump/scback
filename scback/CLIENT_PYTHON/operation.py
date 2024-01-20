@@ -1,6 +1,7 @@
 import helpers_request
 
-def receive_file(file_name,socket,size):
+
+def receive_file(file_name, socket, size):
 
     try:
         with open(file_name,'w') as f:
@@ -24,7 +25,7 @@ def get_file_size(file):
         return file_size
 
 
-def send_file(filename,socket):
+def send_file(filename, socket):
     try:
         with open(filename, 'rb') as file:
 
