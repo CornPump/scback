@@ -83,6 +83,19 @@ void ResponseHandler::send_error_message(tcp::socket &sock, ResponseType error) 
 			static_cast<int>(ResponseType::F_DIR) << "..";
 	}
 
+	if (error == ResponseType::F_NO_FILE) {
+		
+		std::cerr << "Cant delete file " << this->filename << "\nResponding error " <<
+			static_cast<int>(ResponseType::F_DIR) << "..";
+
+		name_len = htons(this->get_name_len());
+		message.insert(message.end(), reinterpret_cast<uint8_t*>(&name_len),
+			reinterpret_cast<uint8_t*>(&name_len) + sizeof(uint16_t));
+
+		message.insert(message.end(), this->filename.begin(), this->filename.end());
+		
+	}
+
 	// Send the message using boost::asio::write
 	boost::asio::write(sock, boost::asio::buffer(message));
 
