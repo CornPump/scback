@@ -8,7 +8,7 @@ import operation
 if __name__ == "__main__":
     # create random user id
     user_id = random.randint(1, helpers_request.MAX_USER_ID)
-    #user_id = 1162125029
+    user_id = 1162125029
     # user_id = 4261025877
     # create client class handler
     client = rh.RequestHandler(user_id)
@@ -46,7 +46,7 @@ if __name__ == "__main__":
         except:
             print("Could not open socket with ", HOST);
             exit()
-        client.create_request(helpers_request.REQUESTS['SAVE_FILE'], 'test.txt', sock)
+        client.create_request(helpers_request.REQUESTS['DELETE_FILE'], 'nadav_gg.txt.txt', sock)
         #operation.send_file('just_got_it', sock)
 
 
