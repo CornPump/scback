@@ -20,7 +20,6 @@ class ResponseHandler:
         data = self.socket.recv(helpers_response.VERSION + helpers_response.STATUS)
 
         if data:
-            print('\nReceived Response', repr(data));
             self.server_version, self.status = struct.unpack('>BH', data)
             # General error response, bad client request
             if self.status == helpers_response.RESPONSE['F_ERROR']:

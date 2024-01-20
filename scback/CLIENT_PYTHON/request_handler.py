@@ -56,7 +56,6 @@ class RequestHandler:
                  binary_file_name + \
                  RequestHandler.convert_to_little_endian(size, helpers_request.SIZE)
 
-        print(header)
         try:
             sock.sendall(header)
         except:
@@ -78,7 +77,8 @@ class RequestHandler:
 
 
     def retrieve_file(self, opcode, file_name: str, sock):
-        print("opcode= ", opcode)
+
+        print("Creating request retrieve_file for file: ", file_name)
         binary_file_name = file_name.encode('utf-8')
         header = RequestHandler.convert_to_little_endian(self.user_id, helpers_request.USER_ID_BYTES) + \
                  RequestHandler.convert_to_little_endian(self.version, helpers_request.VERSION) + \
@@ -87,10 +87,31 @@ class RequestHandler:
                  binary_file_name
 
         print(header)
-        return header
+        try:
+            sock.sendall(header)
+        except:
+            print("couldn't send message")
+            exit()
+
+        resh = response_handler.ResponseHandler(sock)
+        resh.read_response_status()
+
+        if resh.status == helpers_response.RESPONSE['S_RETRIEVE']:
+            resh.read_second_time_full_header()
+            print(f"Server Response = {resh}")
+            # switch tmp with resh.file_name to get the actual name
+            operation.receive_file('tmp', sock, resh.size)
+            print(f"File {resh.file_name} successfully retrieved from the server")
+
+
+        if resh.status == helpers_response.RESPONSE['F_NO_FILE']:
+            resh.read_second_time_part_header()
+            print(f"Server Response = {resh}")
+            print(f"File: {resh.file_name} doesn't exist on the server, retrieve request denied")
+
 
     def delete_file(self, opcode, file_name: str, sock):
-        print("opcode= ", opcode)
+        print("Creating request delete_file on server for file: ", file_name)
         binary_file_name = file_name.encode('utf-8')
         header = RequestHandler.convert_to_little_endian(self.user_id, helpers_request.USER_ID_BYTES) + \
                  RequestHandler.convert_to_little_endian(self.version, helpers_request.VERSION) + \
@@ -98,8 +119,29 @@ class RequestHandler:
                  RequestHandler.convert_to_little_endian(len(file_name), helpers_request.NAME_LEN) + \
                  binary_file_name
 
-        print(header)
-        return header
+        try:
+            sock.sendall(header)
+        except:
+            print("couldn't send message")
+            exit()
+
+        resh = response_handler.ResponseHandler(sock)
+        resh.read_response_status()
+
+        if resh.status == helpers_response.RESPONSE['S_DELETE_OR_BACKUP']:
+
+            resh.read_second_time_part_header()
+            print(f"Server Response = {resh}")
+            print(f"File {resh.file_name} successfully deleted from the server")
+
+        elif resh.status == helpers_response.RESPONSE['F_NO_FILE']:
+
+            resh.read_second_time_part_header()
+            print(f"Server Response = {resh}")
+            print(f"File: {resh.file_name} doesn't exist on the server, delete request denied")
+
+        elif resh.status != helpers_response.RESPONSE['F_ERROR']:
+            print("Unrecognized Response type..")
 
     def list_files(self, opcode, sock):
         print("Creating list_files() request..")
