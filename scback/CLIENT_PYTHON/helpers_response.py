@@ -10,11 +10,11 @@ PAYLOAD = -1
 # Possible server response
 RESPONSE = {
     # File succefully backed
-    'S_BACKUP': 210,
+    'S_RETRIEVE': 210,
     # DIR operation success
     'S_DIR': 211,
     # Transfer or Delete operation success
-    'S_DELETE_OR_TRANSFER': 212,
+    'S_DELETE_OR_BACKUP': 212,
     # File does not exist on server
     'F_NO_FILE': 1001,
     # Client has no files; no directory on the server to client
