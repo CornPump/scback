@@ -5,13 +5,13 @@ import request_handler as rh
 import operation
 
 
-if __name__ == "__main__":
+def main():
     # create random user id
     user_id = random.randint(1, helpers_request.MAX_USER_ID)
 
     # create client class handler
     client = rh.RequestHandler(user_id)
-    print('Created client: ',client,"\n")
+    print('Created client: ', client, "\n")
 
     # pull host port info
     with open('server.info', 'r') as f:
@@ -40,6 +40,8 @@ if __name__ == "__main__":
         client.create_request(helpers_request.REQUESTS['RETRIEVE_FILE'], files_lst[0], sock)
         client.create_request(helpers_request.REQUESTS['DELETE_FILE'], files_lst[0], sock)
         client.create_request(helpers_request.REQUESTS['RETRIEVE_FILE'], files_lst[0], sock)
+if __name__ == "__main__":
+    main()
 
 
 
