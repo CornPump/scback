@@ -40,6 +40,8 @@ def main():
         client.create_request(helpers_request.REQUESTS['RETRIEVE_FILE'], files_lst[0], sock)
         client.create_request(helpers_request.REQUESTS['DELETE_FILE'], files_lst[0], sock)
         client.create_request(helpers_request.REQUESTS['RETRIEVE_FILE'], files_lst[0], sock)
+
+
 if __name__ == "__main__":
     main()
 
