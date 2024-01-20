@@ -6,25 +6,31 @@
 
 using boost::asio::ip::tcp;
 
+void handle_client(tcp::socket&& sock, const std::string& backup_dir) {
+    uint8_t opcode = 1;
+
+    while (opcode) {
+        // response handler instance
+        ResponseHandler resh;
+
+        // Wait for the client to send data and validate the header
+        RequestHandler reqh(backup_dir);
+        opcode = reqh.validate_request_header(sock, resh);
+
+        // if the header is incorrect send an error message
+        if (!opcode) {
+            resh.send_error_message(sock, ResponseType::F_ERROR);
+        }
+        else {
+            reqh.print();
+            reqh.manage_request(static_cast<RequestType>(opcode), sock);
+        }
+    }
+}
+
 
 int main() {
     
-
-    /*
-        for (int i = 0; i < 10; i++){
-        std::cout << generate_random_name(32) << "\n";
-    }
-    exit(1);
-    std::string path = R"(C:\Users\Fisher\source\repos\scback\scback\SERVER_CPP\)";
-    std::vector<std::string> vec = get_dir_files(path);
-    bool exist = std::filesystem::exists(path);
-    std::cout << exist << std::endl;
-    exit(1);
-    std::cout << path << std::endl;
-    long long tmp = 148434;
-    //std::cout << tmp;
-    */
-
     // create backup dir 
     std::string working_dir = std::filesystem::current_path().string();
     std::string backup_dir = create_dir(working_dir, BACKUP_DIR_NAME);
@@ -34,34 +40,20 @@ int main() {
     int port = 1234;
     boost::asio::io_context io_context;
     tcp::acceptor a(io_context, tcp::endpoint(tcp::v4(), port));
-    std::cout << "Waiting for client.. \n";
-    tcp::socket sock = a.accept(); // this waits for client to open session
-    std::cout << "Accepting client \n";
-    sock.set_option(boost::asio::detail::socket_option::integer<SOL_SOCKET, SO_RCVTIMEO>{5000});
+    std::cout << "Waiting for clients.. \n";
 
-    // response handler instance
-    ResponseHandler resh;
-
-    // Wait for the client to send data and validate the header
-    RequestHandler reqh(backup_dir);
-    uint8_t opcode = reqh.validate_request_header(sock,resh);
-
-    // if the header is incorrect send error message 
-    if (!opcode) { resh.send_error_message(sock, ResponseType::F_ERROR); }
-
-    else {
-
-        reqh.print();
-        reqh.manage_request(static_cast<RequestType>(opcode),sock);
+    while (true) {
+        try {
+            // Accept a new connection
+            tcp::socket sock = a.accept();
+            sock.set_option(boost::asio::detail::socket_option::integer<SOL_SOCKET, SO_RCVTIMEO>{5000});
+            // Spawn a new thread for each client
+            std::thread(handle_client, std::move(sock), backup_dir).detach();
+        }
+        catch (const std::exception& e) {
+            std::cerr << "Exception in main: " << e.what() << std::endl;
+        }
     }
-/*
-    int e = 0;
-
-    while (!e) {
-        std::cin >> e;
-    }
-    return 0;
-    */
 }
 
 

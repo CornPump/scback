@@ -56,8 +56,34 @@ void RequestHandler::save_and_backup(tcp::socket& sock) {
 
 }
 void RequestHandler::retrieve_file(tcp::socket& sock) {
-    std::cout << "USE FUNCTION";
+    std::cout << "In retrieve_file() for user_id:" << this->user_id << std::endl;
+    std::string user_dir_name = std::to_string(this->user_id);
+
+    std::filesystem::path full_file_name = std::filesystem::current_path()
+        / BACKUP_DIR_NAME / std::to_string(this->user_id) / this->file_name;
+
+    ResponseHandler resh;
+    resh.set_name_len(static_cast<uint16_t>(this->file_name.length()));
+    resh.set_filename(this->file_name);
+
+    bool file_exist = check_file_exist(full_file_name);
+
+    if (file_exist) {
+
+        resh.set_status(static_cast<uint8_t>(ResponseType::S_RETRIEVE));
+        std::cout << "Retreiving file: " << full_file_name.string() << std::endl;
+      
+        uint32_t file_size = static_cast<uint32_t>(get_file_size(full_file_name.string()));
+        resh.set_size(file_size);
+        resh.send_success_header(sock);
+        send_file(full_file_name.string(), sock, file_size);
+
+    }
+
+    else { resh.send_error_message(sock, ResponseType::F_NO_FILE); }
 }
+
+
 void RequestHandler::delete_file(tcp::socket& sock) {
     std::cout << "In delete_file() for user_id:" << this->user_id << std::endl;
     std::string user_dir_name = std::to_string(this->user_id);
@@ -70,7 +96,6 @@ void RequestHandler::delete_file(tcp::socket& sock) {
     resh.set_filename(this->file_name);
 
     bool file_exist = check_file_exist(full_file_name);
-    std::cout << file_exist;
     if (file_exist) {
 
         resh.set_status(static_cast<uint8_t>(ResponseType::S_DELETE_OR_BACKUP));

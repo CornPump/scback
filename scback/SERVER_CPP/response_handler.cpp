@@ -85,7 +85,7 @@ void ResponseHandler::send_error_message(tcp::socket &sock, ResponseType error) 
 
 	if (error == ResponseType::F_NO_FILE) {
 		
-		std::cerr << "Cant delete file " << this->filename << "\nResponding error " <<
+		std::cerr << "Cant delete/retreive file " << this->filename << "\nResponding error " <<
 			static_cast<int>(ResponseType::F_DIR) << "..";
 
 		name_len = htons(this->get_name_len());
